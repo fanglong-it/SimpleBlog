@@ -16,7 +16,7 @@
         <title>Login Page</title>
     </head>
     <body>
-         <h1>Login Page</h1>
+        <h1>Login Page</h1>
         <form action="login" method="POST">
             <div class="position-absolute top-50 start-50 translate-middle">
                 <div class="mb-3">
@@ -28,12 +28,13 @@
                     <input type="password" name="Password" class="form-control" id="exampleInputPassword1">
                 </div>
                 <c:if test="${not empty requestScope.LOGIN_MSG}">
-                    
+
                     <p style="color: red">${requestScope.LOGIN_MSG}</p>
                 </c:if>
                 <br>
                 <button type="submit" name ="btnAction" class="btn btn-primary">Submit</button>
                 <a class="btn btn-primary" href="register.jsp">Register</a>
+                <a class="btn btn-danger" href="search?searchValue=">Home Page</a>
             </div>
         </form>
     </body>

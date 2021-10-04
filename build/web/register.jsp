@@ -19,13 +19,16 @@
 
     </head>
     <body>
+        <hr>
+        <a class="btn btn-primary" href="search?searchValue=" >Back Home</a>
+        <hr>
         <div class="position-absolute top-50 start-50 translate-middle w-75 p-3" style="">
             <form class="row g-3" action="createAccount">
                 <div class="col-12">
                     Email
                     <input type="email" name="txtEmail" class="form-control" value="" required>
                 </div>
-                
+
                 <div class="col-12">
                     Password
                     <input type="password" name="txtPassword" class="form-control"  value="" required>
@@ -38,12 +41,12 @@
                     Name
                     <input type="text" name="txtName" class="form-control" id="" value="" required>
                 </div>
-                
+
                 <div class="col-md-4">
                     <label for="inputPhone" class="form-label">Phone Number</label>
                     <input type="tel" pattern="[0-9]{9,10}" class="form-control" name="txtPhoneNumber" value="" required>
                 </div>
-               
+
                 <c:if test="${not empty requestScope.CREATEACCOUNT_MSG}">
                     <p style="color: red">${requestScope.CREATEACCOUNT_MSG}</p>
                 </c:if>

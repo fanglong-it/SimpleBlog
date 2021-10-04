@@ -6,22 +6,24 @@
 package phuochg.controllers;
 
 import java.io.IOException;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import phuochg.account.AccountDAO;
-import phuochg.account.AccountDTO;
+import phuochg.article.ArticleDAO;
+import phuochg.article.ArticleDTO;
+import phuochg.comments.CommentDAO;
+import phuochg.comments.CommentDTO;
 
 /**
  *
  * @author cunpl
  */
-public class LoginServlet extends HttpServlet {
+public class ViewArticleDetailServlet extends HttpServlet {
 
-    private static final String LOGIN_PAGE = "login.jsp";
-    private static final String HOME_PAGE = "SearchServlet?searchValue=";
+    private static final String ARTICLE_DETAIL = "articleDetails.jsp";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,39 +37,26 @@ public class LoginServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-
-        String url = LOGIN_PAGE;
+        String url = ARTICLE_DETAIL;
         try {
-
-            String Username = request.getParameter("Username");
-            String Password = request.getParameter("Password");
-
-            AccountDAO AccDao = new AccountDAO();
-
-            AccountDTO acc = AccDao.login(Username, Password);
             HttpSession session = request.getSession();
-            String msg = "";
-            if (acc == null) {
-                msg = "Email and Password not match";
-            } else {
-                if (acc.getStatus().equals("New")) {
-                    msg = "The account not Active!";
-                    url = LOGIN_PAGE;
-                } else {
 
-                    if (session.getAttribute("LOAD_URL") != null) {
-                        session.setAttribute("ACC", acc);
-                        url = (String) session.getAttribute("LOAD_URL");
-                    } else {
-                        session.setAttribute("ACC", acc);
-                        url = HOME_PAGE;
-                    }
+            int titleId = Integer.parseInt(request.getParameter("titleId"));
+            ArticleDAO articleDao = new ArticleDAO();
+            
+            //GET ARTICLE DETAIL
+            ArticleDTO article = articleDao.getArticleDetail(titleId);
+            session.setAttribute("ARTICLE_DETAIL", article);
 
-                }
-            }
-            request.setAttribute("LOGIN_MSG", msg);
+            //GET COMMENT LIST
+            List<CommentDTO> listComment = null;
+            
+            CommentDAO commentDao = new CommentDAO();
+            listComment = commentDao.listComment(titleId);
+            session.setAttribute("LIST_COMMENT", listComment);
+            
         } catch (Exception e) {
-            log("Error at LoginServlet:" + e.toString());
+            log("Error at ViewArticleDetailServlet:" + e.toString());
         } finally {
             request.getRequestDispatcher(url).forward(request, response);
         }

@@ -21,55 +21,91 @@
     <body>
         <h1>Home For User</h1>
 
+
         <c:if test="${sessionScope.ACC != null}">
             <h2>Welcome, ${sessionScope.ACC.email}</h2>
             <a href="logout" class="btn btn-danger" >Logout</a>
         </c:if>
-        <c:if test="${sessionScope.ACC == null}">
-            <a href="login.jsp" class="btn btn-danger" >Login</a>
+        <c:if test="${sessionScope.ACC.roleId eq 'US'}">
+            <c:redirect url="homeForUser.jsp"/>
         </c:if>
-        <c:if test="${sessionScope.ACC.roleId eq 'AD'}">
-            <c:redirect url="homeForAdmin.jsp"/>
-        </c:if>
-            <hr>
-            <a class="btn btn-primary" href="search?searchValue=" >Back Home</a>
-            <hr>
+        <hr>
+        <a class="btn btn-primary" href="search?searchValue=" >Back Home</a>
+        <hr>
+        <hr>
+        <form action="setPage">
+            <select name="numberOfPage">
+                <option value="1">1</option>
+                <option value="5">5</option>
+                <option value="10">10</option>
+                <option value="15">15</option>
+                <option value="20">20</option>
+                <option value="25">25</option>
+                <option value="30">30</option>
+                
+            </select>
+            <button name="btnAction" class="btn btn-danger">Set</button>
+            
+             <c:if test="${requestScope.SETPAGE_MSG != null}">
+                <p style="color: red">${requestScope.SETPAGE_MSG}</p>
+            </c:if>
+            
+        </form>
+
+        <hr>
 
         <form action="search">
 
             Search Value: <input  style="width: 20%" type="text" name="searchValue" value="${param.searchValue}">
+            <select name="option">
+                <option value="" selected=""></option>
+                <option value="New">New</option>
+                <option value="Active">Active</option>
+                <option value="Delete">Delete</option>
+            </select>
             <button class="btn btn-primary">Search</button>
-            <a class="btn btn-danger" href="postArticlePage?">Post Article</a>
-            <a class="btn btn-danger" href="requestArticlePage?">View Request</a>
+            <c:if test="${requestScope.UPDATE_MSG != null}">
+                <p style="color: red">${requestScope.UPDATE_MSG}</p>
+            </c:if>
+
+
             <c:if test="${requestScope.SEARCH_MSG != null}">
                 <p style="color: red">${requestScope.SEARCH_MSG}</p>
             </c:if>
             <table border="" class="table table-striped">
                 <thead>
                     <tr>
-                        <th>No.</th>
+                        <th>Title Id</th>
                         <th>Title</th>
-                        <th>Description</th>
+                        <th style="width: 30%">Description</th>
                         <th>Author</th>
                         <th>PostDate</th>
                         <th>Content</th>
+                        <th>Status</th>
                         <th>Action</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <c:forEach var="a" items="${requestScope.LIST_ARTICLE}" >
+                    <c:forEach var="a" items="${requestScope.LIST_ARTICLE}">
                         <tr>
-                            <td>
-                                <!-- Them o day -->
+                            <td>${a.titleId}
                                 <input type="hidden" name="titleId" value="${a.titleId}">
                             </td>
                             <td>${a.titleName}</td>
                             <td>${a.description}</td>
                             <td>${a.email}</td>
                             <td>${a.postDate}</td>
-                            <td>${a.contentName}</td>
+                            <td>${a.contentId}</td>
+                            <td>${a.status}</td>
                             <td>
-                                <a class="btn btn-warning" href="viewArticleDetail?titleId=${a.titleId}">Details</a>
+                                <c:if test="${a.status eq 'Active'}">
+
+                                </c:if>
+                                <c:if test="${a.status eq 'New'}">
+                                    <a href="deleteRequest?titleId=${a.titleId}" class="btn btn-danger">Delete</a>
+                                    <a href="acceptRequest?titleId=${a.titleId}" class="btn btn-success">Accept</a>
+                                </c:if>
+
                             </td>
                         </tr>
                     </c:forEach>

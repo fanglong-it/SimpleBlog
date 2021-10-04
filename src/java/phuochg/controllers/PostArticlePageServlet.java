@@ -6,22 +6,25 @@
 package phuochg.controllers;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import phuochg.account.AccountDAO;
 import phuochg.account.AccountDTO;
+import phuochg.contents.ContentDAO;
+import phuochg.contents.ContentDTO;
 
 /**
  *
  * @author cunpl
  */
-public class LoginServlet extends HttpServlet {
+public class PostArticlePageServlet extends HttpServlet {
 
+    private static final String POST_ARTICLE_PAGE = "postArticle.jsp";
     private static final String LOGIN_PAGE = "login.jsp";
-    private static final String HOME_PAGE = "SearchServlet?searchValue=";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,39 +38,23 @@ public class LoginServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-
-        String url = LOGIN_PAGE;
+        String url = POST_ARTICLE_PAGE;
         try {
-
-            String Username = request.getParameter("Username");
-            String Password = request.getParameter("Password");
-
-            AccountDAO AccDao = new AccountDAO();
-
-            AccountDTO acc = AccDao.login(Username, Password);
             HttpSession session = request.getSession();
+
+            AccountDTO acc = (AccountDTO) session.getAttribute("ACC");
             String msg = "";
             if (acc == null) {
-                msg = "Email and Password not match";
+                url = LOGIN_PAGE;
+                msg = "You must Login to Post an Article!";
+                request.setAttribute("LOGIN_MSG", msg);
             } else {
-                if (acc.getStatus().equals("New")) {
-                    msg = "The account not Active!";
-                    url = LOGIN_PAGE;
-                } else {
-
-                    if (session.getAttribute("LOAD_URL") != null) {
-                        session.setAttribute("ACC", acc);
-                        url = (String) session.getAttribute("LOAD_URL");
-                    } else {
-                        session.setAttribute("ACC", acc);
-                        url = HOME_PAGE;
-                    }
-
-                }
+                ContentDAO contentDao = new ContentDAO();
+                List<ContentDTO> listContent = contentDao.listContent();
+                session.setAttribute("LIST_CONTENT", listContent);
             }
-            request.setAttribute("LOGIN_MSG", msg);
         } catch (Exception e) {
-            log("Error at LoginServlet:" + e.toString());
+            log("Error at PostArticlePageServlet:" + e.toString());
         } finally {
             request.getRequestDispatcher(url).forward(request, response);
         }

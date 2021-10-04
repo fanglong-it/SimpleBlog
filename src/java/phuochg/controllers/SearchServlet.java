@@ -6,22 +6,24 @@
 package phuochg.controllers;
 
 import java.io.IOException;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import phuochg.account.AccountDAO;
 import phuochg.account.AccountDTO;
+import phuochg.article.ArticleDAO;
+import phuochg.article.ArticleDTO;
 
 /**
  *
  * @author cunpl
  */
-public class LoginServlet extends HttpServlet {
+public class SearchServlet extends HttpServlet {
 
-    private static final String LOGIN_PAGE = "login.jsp";
-    private static final String HOME_PAGE = "SearchServlet?searchValue=";
+    private static final String HOME_PAGE_USER = "homeForUser.jsp";
+    private static final String HOME_PAGE_ADMIN = "homeForAdmin.jsp";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,39 +37,62 @@ public class LoginServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-
-        String url = LOGIN_PAGE;
+        String url = HOME_PAGE_USER;
         try {
+            String search = request.getParameter("searchValue");
+            ArticleDAO articleDao = new ArticleDAO();
 
-            String Username = request.getParameter("Username");
-            String Password = request.getParameter("Password");
-
-            AccountDAO AccDao = new AccountDAO();
-
-            AccountDTO acc = AccDao.login(Username, Password);
             HttpSession session = request.getSession();
+            AccountDTO acc = (AccountDTO) session.getAttribute("ACC");
+            List<ArticleDTO> list = null;
             String msg = "";
-            if (acc == null) {
-                msg = "Email and Password not match";
+            
+            
+            //NumberOfPage
+            int numberOfPage = articleDao.getNumberOfPage();
+            
+            //Paging
+            int pageLoad;
+            if (request.getParameter("page") == null) {
+                pageLoad = 1;
             } else {
-                if (acc.getStatus().equals("New")) {
-                    msg = "The account not Active!";
-                    url = LOGIN_PAGE;
+                pageLoad = Integer.parseInt(request.getParameter("page"));
+            }
+            
+            double page = Math.ceil(articleDao.getCountAllArticle() / 1);
+            
+            request.setAttribute("page", page);
+            if (acc == null) {
+                list = articleDao.searchArticleUser(search, pageLoad, numberOfPage);
+                msg = "Success";
+            } else if (acc.getRoleId().equals("US")) {
+                list = articleDao.searchArticleUser(search, pageLoad, numberOfPage);
+                msg = "Success";
+            } else if (acc.getRoleId().equals("AD")) {
+                String option = request.getParameter("option");
+                if (option == null || option.equals("")) {
+                    list = articleDao.searchArticleAdmin(search, "", pageLoad);
+                } else if (option.equals("New")) {
+                    list = articleDao.searchArticleAdmin(search, "New", pageLoad);
+                } else if (option.equals("Active")) {
+                    list = articleDao.searchArticleAdmin(search, "Active", pageLoad);
+                } else if (option.equals("Delete")) {
+                    list = articleDao.searchArticleAdmin(search, "Delete", pageLoad);
+                }
+                msg = "Success";
+            }
+            if (!list.isEmpty()) {
+                request.setAttribute("LIST_ARTICLE", list);
+                if (acc.getRoleId().equals("AD")) {
+                    url = HOME_PAGE_ADMIN;
                 } else {
-
-                    if (session.getAttribute("LOAD_URL") != null) {
-                        session.setAttribute("ACC", acc);
-                        url = (String) session.getAttribute("LOAD_URL");
-                    } else {
-                        session.setAttribute("ACC", acc);
-                        url = HOME_PAGE;
-                    }
-
+                    url = HOME_PAGE_USER;
                 }
             }
-            request.setAttribute("LOGIN_MSG", msg);
+            request.setAttribute("SEARCH_MSG", msg);
+
         } catch (Exception e) {
-            log("Error at LoginServlet:" + e.toString());
+            log("Error at SearchServlet:" + e.toString());
         } finally {
             request.getRequestDispatcher(url).forward(request, response);
         }

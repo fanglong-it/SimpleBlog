@@ -12,6 +12,46 @@
         <servlet-name>ConfirmCodeServlet</servlet-name>
         <servlet-class>phuochg.controllers.ConfirmCodeServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>SearchServlet</servlet-name>
+        <servlet-class>phuochg.controllers.SearchServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>LogoutServlet</servlet-name>
+        <servlet-class>phuochg.controllers.LogoutServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ViewArticleDetailServlet</servlet-name>
+        <servlet-class>phuochg.controllers.ViewArticleDetailServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>CommentServlet</servlet-name>
+        <servlet-class>phuochg.controllers.CommentServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>PostArticlePageServlet</servlet-name>
+        <servlet-class>phuochg.controllers.PostArticlePageServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>PostArticleServlet</servlet-name>
+        <servlet-class>phuochg.controllers.PostArticleServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>RequestArticlePageServlet</servlet-name>
+        <servlet-class>phuochg.controllers.RequestArticlePageServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>DeleteRequestServlet</servlet-name>
+        <servlet-class>phuochg.controllers.DeleteRequestServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>AcceptRequestServlet</servlet-name>
+        <servlet-class>phuochg.controllers.AcceptRequestServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SetPageServlet</servlet-name>
+        <servlet-class>phuochg.controllers.SetPageServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>LoginServlet</servlet-name>
         <url-pattern>/LoginServlet</url-pattern>
@@ -23,6 +63,46 @@
     <servlet-mapping>
         <servlet-name>ConfirmCodeServlet</servlet-name>
         <url-pattern>/ConfirmCodeServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SearchServlet</servlet-name>
+        <url-pattern>/SearchServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>LogoutServlet</servlet-name>
+        <url-pattern>/LogoutServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewArticleDetailServlet</servlet-name>
+        <url-pattern>/ViewArticleDetailServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>CommentServlet</servlet-name>
+        <url-pattern>/CommentServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PostArticlePageServlet</servlet-name>
+        <url-pattern>/PostArticlePageServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PostArticleServlet</servlet-name>
+        <url-pattern>/PostArticleServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>RequestArticlePageServlet</servlet-name>
+        <url-pattern>/RequestArticlePageServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>DeleteRequestServlet</servlet-name>
+        <url-pattern>/DeleteRequestServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>AcceptRequestServlet</servlet-name>
+        <url-pattern>/AcceptRequestServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SetPageServlet</servlet-name>
+        <url-pattern>/SetPageServlet</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

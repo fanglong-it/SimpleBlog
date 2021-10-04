@@ -28,6 +28,7 @@ import javax.servlet.http.HttpServletRequest;
 @WebFilter(filterName = "FilterDispatcher", urlPatterns = {"/*"})
 public class FilterDispatcher implements Filter {
     private static final String LOGINPAGE = "login.jsp";
+    private static final String HOME_FOR_USER = "SearchServlet?searchValue=";
     
     private static final boolean debug = true;
 
@@ -107,7 +108,7 @@ public class FilterDispatcher implements Filter {
         
          HttpServletRequest req = (HttpServletRequest) request;
         String uri = req.getRequestURI();
-        String url = LOGINPAGE;
+        String url = HOME_FOR_USER;
         try {
             int lastIndex = uri.lastIndexOf("/");
             String resource = uri.substring(lastIndex + 1);

@@ -11,17 +11,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import phuochg.account.AccountDAO;
 import phuochg.account.AccountDTO;
+import phuochg.comments.CommentDAO;
+import phuochg.comments.CommentDTO;
 
 /**
  *
  * @author cunpl
  */
-public class LoginServlet extends HttpServlet {
+public class CommentServlet extends HttpServlet {
 
+    private static final String ARTICLE_DETAIL = "articleDetails.jsp";
     private static final String LOGIN_PAGE = "login.jsp";
-    private static final String HOME_PAGE = "SearchServlet?searchValue=";
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
@@ -35,39 +36,36 @@ public class LoginServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-
-        String url = LOGIN_PAGE;
+        String url = ARTICLE_DETAIL;
         try {
-
-            String Username = request.getParameter("Username");
-            String Password = request.getParameter("Password");
-
-            AccountDAO AccDao = new AccountDAO();
-
-            AccountDTO acc = AccDao.login(Username, Password);
             HttpSession session = request.getSession();
+            AccountDTO acc = (AccountDTO) session.getAttribute("ACC");
+            CommentDAO commentDao = new CommentDAO();
+            int titleId = Integer.parseInt(request.getParameter("titleId"));
+
+            String commentDes = request.getParameter("CommentDes");
             String msg = "";
+
             if (acc == null) {
-                msg = "Email and Password not match";
+                url = LOGIN_PAGE;
+                String loadURL = "ViewArticleDetailServlet?titleId=" + titleId;
+                session.setAttribute("LOAD_URL", loadURL);
             } else {
-                if (acc.getStatus().equals("New")) {
-                    msg = "The account not Active!";
-                    url = LOGIN_PAGE;
+                if (commentDes.equals("")) {
+                    msg = "Please fill out the comment!";
+                } else if (commentDes == null) {
+                    msg = "Please fill out the comment!";
                 } else {
-
-                    if (session.getAttribute("LOAD_URL") != null) {
-                        session.setAttribute("ACC", acc);
-                        url = (String) session.getAttribute("LOAD_URL");
-                    } else {
-                        session.setAttribute("ACC", acc);
-                        url = HOME_PAGE;
-                    }
-
+                    CommentDTO comment = new CommentDTO(titleId, acc.getEmail(), commentDes);
+                    commentDao.insertComment(comment);
+                    msg = "Success";
+                    url = "ViewArticleDetailServlet?titleId=" +titleId;
                 }
             }
-            request.setAttribute("LOGIN_MSG", msg);
+            request.setAttribute("COMMENT_MSG", msg);
+
         } catch (Exception e) {
-            log("Error at LoginServlet:" + e.toString());
+            log("Error at CommentServlet:" + e.toString());
         } finally {
             request.getRequestDispatcher(url).forward(request, response);
         }

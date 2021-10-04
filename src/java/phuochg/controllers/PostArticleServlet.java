@@ -6,23 +6,23 @@
 package phuochg.controllers;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import phuochg.account.AccountDAO;
-import phuochg.account.AccountDTO;
+import phuochg.article.ArticleDAO;
+import phuochg.article.ArticleDTO;
 
 /**
  *
  * @author cunpl
  */
-public class LoginServlet extends HttpServlet {
-
-    private static final String LOGIN_PAGE = "login.jsp";
-    private static final String HOME_PAGE = "SearchServlet?searchValue=";
-
+public class PostArticleServlet extends HttpServlet {
+    
+    private static final String HOME_PAGE_USER = "SearchServlet?searchValue=";
+    private static final String POST_ARTICLE = "postArticle.jsp";
+    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -35,40 +35,26 @@ public class LoginServlet extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         response.setContentType("text/html;charset=UTF-8");
-
-        String url = LOGIN_PAGE;
+        String url = HOME_PAGE_USER;
+        
         try {
-
-            String Username = request.getParameter("Username");
-            String Password = request.getParameter("Password");
-
-            AccountDAO AccDao = new AccountDAO();
-
-            AccountDTO acc = AccDao.login(Username, Password);
-            HttpSession session = request.getSession();
+            String titleName = request.getParameter("titleName");
+            String email = request.getParameter("email");
+            String contentId = request.getParameter("contentId");
+            String description = request.getParameter("description");
+            ArticleDTO article = new ArticleDTO(titleName, description, contentId, email, "", "New");
+            ArticleDAO articleDao = new ArticleDAO();
             String msg = "";
-            if (acc == null) {
-                msg = "Email and Password not match";
-            } else {
-                if (acc.getStatus().equals("New")) {
-                    msg = "The account not Active!";
-                    url = LOGIN_PAGE;
-                } else {
-
-                    if (session.getAttribute("LOAD_URL") != null) {
-                        session.setAttribute("ACC", acc);
-                        url = (String) session.getAttribute("LOAD_URL");
-                    } else {
-                        session.setAttribute("ACC", acc);
-                        url = HOME_PAGE;
-                    }
-
-                }
+            if(articleDao.insertArticle(article)){
+                msg = "Post Success You can view process at View Request";
+                url = HOME_PAGE_USER;
+            }else{
+                msg = "Post Fail try again";
+                url = POST_ARTICLE;
             }
-            request.setAttribute("LOGIN_MSG", msg);
         } catch (Exception e) {
-            log("Error at LoginServlet:" + e.toString());
-        } finally {
+            log("Error at PostArticleServlet:"+e.toString());
+        }finally{
             request.getRequestDispatcher(url).forward(request, response);
         }
     }
